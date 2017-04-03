@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"regexp"
+	"strings"
 )
 
 // Readln returns a single line (without the ending \n)
@@ -36,4 +37,34 @@ func FindEmails(s string) []string {
 	}
 
 	return emails
+}
+
+// HTML2Text to text, find index of the email and do 100 bytes before and 100 bytes later
+func HTML2Text(html string) string {
+	//TODO: implement
+	return html
+}
+
+// FindEmailContext finds context surrounding the email
+func FindEmailContext(s string, size int) map[string]string {
+	b := []byte(s)
+	res := emailRegex.FindAllSubmatchIndex(b, -1)
+	ret := make(map[string]string)
+
+	for _, r := range res {
+		pos := r[1]
+		start := pos - size
+		if start < 0 {
+			start = 0
+		}
+		end := pos
+		if end > len(b) {
+			end = len(b)
+		}
+		context := strings.Replace(string(b[start:end]), "\n", " ", -1)
+		for _, e := range FindEmails(context) {
+			ret[e] += context
+		}
+	}
+	return ret
 }
