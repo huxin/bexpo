@@ -57,7 +57,7 @@ func FindEmailContext(s string, size int) map[string]string {
 		if start < 0 {
 			start = 0
 		}
-		end := pos
+		end := pos + 20
 		if end > len(b) {
 			end = len(b)
 		}
@@ -66,5 +66,28 @@ func FindEmailContext(s string, size int) map[string]string {
 			ret[e] += context
 		}
 	}
+	return ret
+}
+
+var phoneNumberRegex = regexp.MustCompile("0551")
+
+func findPhoneNumberContext(s string, size int) (ret []string) {
+	b := []byte(s)
+	res := phoneNumberRegex.FindAllSubmatchIndex(b, -1)
+
+	for _, r := range res {
+		pos := r[1]
+		start := pos - size
+		if start < 0 {
+			start = 0
+		}
+		end := pos + size
+		if end > len(b) {
+			end = len(b)
+		}
+		context := strings.Replace(string(b[start:end]), "\n", " ", -1)
+		ret = append(ret, context)
+	}
+
 	return ret
 }

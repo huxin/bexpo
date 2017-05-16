@@ -14,7 +14,12 @@ import (
 
 func main() {
 
-	burpLog := "/Users/huxin/code/burp/burp_jcyxy.logs"
+	if len(os.Args) < 2 {
+		fmt.Println("Usage:", os.Args[0], "burp_log_files")
+		os.Exit(1)
+	}
+
+	burpLog := os.Args[1] //"/Users/huxin/code/burp/burp_jcyxy.logs"
 	emailContext := make(map[string]string)
 
 	file, err := os.Open(burpLog)
@@ -70,7 +75,8 @@ func main() {
 	}
 	fmt.Printf("Read %d lines, %d emails\n", cnt, len(emailContext))
 
-	outf, err := os.Create("email_context.txt")
+	outfname := burpLog + ".email_context.txt"
+	outf, err := os.Create(outfname)
 	if err != nil {
 		log.Fatal(err)
 	}
